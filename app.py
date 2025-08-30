@@ -3,8 +3,8 @@ import streamlit as st
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import RetrievalQA
-from langchain.vectorstores import FAISS
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.vectorstores import FAISS
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import tempfile
 
@@ -15,7 +15,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 # Set Streamlit page config
 st.set_page_config(page_title="PDF Q&A Bot", layout="centered")
 
-st.title("Chat with your PD using LangChain + GPT-4")
+st.title("Chat with your PDF using LangChain + GPT-4")
 
 # Upload PDF
 uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
@@ -26,10 +26,11 @@ if uploaded_file:
         tmp_file.write(uploaded_file.read())
         pdf_path = tmp_file.name
 
-    # Load PDF and split into chunks
+    # Load PDF
     loader = PyPDFLoader(pdf_path)
     pages = loader.load()
 
+    # Split into chunks
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     docs = text_splitter.split_documents(pages)
 
